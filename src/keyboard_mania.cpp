@@ -11,6 +11,18 @@ struct Note {
     int row;
     int column;
     uint length;
+
+    LedKeyboard::Color color;
+};
+
+static const auto colors = std::array {
+    LedKeyboard::Color { .red = 0xff, .green = 0x80, .blue = 0xed },
+    LedKeyboard::Color { .red = 0x06, .green = 0x55, .blue = 0x35 },
+    LedKeyboard::Color { .red = 0xff, .green = 0xc0, .blue = 0xcb },
+    LedKeyboard::Color { .red = 0xff, .green = 0xff, .blue = 0xff },
+    LedKeyboard::Color { .red = 0xff, .green = 0xe4, .blue = 0xe1 },
+    LedKeyboard::Color { .red = 0x00, .green = 0x80, .blue = 0x80 },
+    LedKeyboard::Color { .red = 0x13, .green = 0x33, .blue = 0x37 },
 };
 
 void render_note(std::vector<LedKeyboard::KeyValue>& keys, Note const& note)
@@ -28,7 +40,7 @@ void render_note(std::vector<LedKeyboard::KeyValue>& keys, Note const& note)
 
         keys.push_back(LedKeyboard::KeyValue {
             .key = *key,
-            .color = { .red = 0xFF, .green = 0xFF, .blue = 0xFF },
+            .color = note.color,
         });
     }
 }
@@ -79,6 +91,7 @@ std::vector<Note> build_note_sequence(Osu const& osu)
             .row = row,
             .column = hit_object.time / 100,
             .length = length,
+            .color = colors[row],
         });
     }
 
