@@ -14,7 +14,7 @@
   along with g810-led.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "Keyboard.h"
+#include "keyboard.h"
 
 #include <iostream>
 #include <unistd.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keyboard.h"
+#include "keyboard.h"
 #include <vector>
 #include <optional>
 
@@ -21,4 +21,3 @@ std::vector<std::vector<std::optional<LedKeyboard::Key>>> map =
 };
 
 }
-

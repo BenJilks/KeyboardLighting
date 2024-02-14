@@ -11,10 +11,9 @@ find_library(LIBUSB_LIBRARY
 )
 
 set(COMMON_SOURCES
-    src/Keyboard.cpp src/Keyboard.h
+    src/keyboard.cpp src/keyboard.h
     src/keyboard_layout.h
     src/stb_image.h
-    src/utils.h
 )
 
 add_executable(text src/keyboard_text.cpp ${COMMON_SOURCES})
