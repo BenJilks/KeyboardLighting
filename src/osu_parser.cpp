@@ -4,6 +4,7 @@
 #include <optional>
 #include <format>
 #include <charconv>
+#include <algorithm>
 
 enum class State {
     Initial,
@@ -90,23 +91,24 @@ static std::pair<std::string, std::string> parse_key_value_pair(std::string_view
     return std::make_pair(key, value);
 }
 
-static std::vector<std::string_view> parse_csv(std::string_view line) {
+static std::vector<std::string_view> parse_separated_values(std::string_view line, char separator) {
     std::vector<std::string_view> output;
 
     size_t start = 0;
     for (size_t i = 0; i < line.size(); i++) {
         char c = line[i];
-        if (c == ',') {
+        if (c == separator) {
             output.push_back(line.substr(start, i - start));
             start = i + 1;
         }
     }
 
+    output.push_back(line.substr(start, line.size() - start - 1));
     return output;
 }
 
 static TimingPoint parse_timing_point(std::string_view line) {
-    auto values = parse_csv(line);
+    auto values = parse_separated_values(line, ',');
 
     auto parse_int = [](std::string_view value) {
         int i = 0;
@@ -131,8 +133,23 @@ static TimingPoint parse_timing_point(std::string_view line) {
     };
 }
 
+static std::array<int, 5> parse_params(std::string_view param_str) {
+    std::array<int, 5> params {};
+
+    auto values = parse_separated_values(param_str, ':');
+    for (size_t i = 0; i < std::min(values.size(), 5ul); ++i) {
+        const auto &value_str = values.at(i);
+
+        int value = 0;
+        std::from_chars(value_str.data(), value_str.data() + value_str.size(), value);
+        params[i] = value;
+    }
+
+    return params;
+}
+
 static HitObject parse_hit_object(std::string_view line) {
-    auto values = parse_csv(line);
+    auto values = parse_separated_values(line, ',');
 
     auto parse_int = [](std::string_view value) {
         int i = 0;
@@ -145,6 +162,8 @@ static HitObject parse_hit_object(std::string_view line) {
         .y = parse_int(values[1]),
         .time = parse_int(values[2]),
         .type = parse_int(values[3]),
+        .hit_sound = parse_int(values[4]),
+        .params = parse_params(values[5]),
     };
 }
 

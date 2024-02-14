@@ -1,6 +1,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <array>
 
 struct TimingPoint {
     int time;
@@ -17,6 +18,8 @@ struct HitObject {
     int y;
     int time;
     int type;
+    int hit_sound;
+    std::array<int, 5> params;
 };
 
 struct Osu {
