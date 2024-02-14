@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(KeyboardLighting)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 add_compile_definitions(libusb)
 find_library(LIBUSB_LIBRARY
@@ -22,5 +22,5 @@ target_link_libraries(text ${LIBUSB_LIBRARY})
 add_executable(image src/keyboard_image.cpp ${COMMON_SOURCES})
 target_link_libraries(image ${LIBUSB_LIBRARY})
 
-add_executable(mania src/keyboard_mania.cpp ${COMMON_SOURCES})
+add_executable(mania src/keyboard_mania.cpp src/osu_parser.cpp ${COMMON_SOURCES})
 target_link_libraries(mania ${LIBUSB_LIBRARY})

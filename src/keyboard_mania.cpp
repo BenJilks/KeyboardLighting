@@ -1,4 +1,5 @@
 #include "keyboard.h"
+#include "osu_parser.h"
 #include <unistd.h>
 
 void play_song()
