@@ -21,3 +21,6 @@ target_link_libraries(text ${LIBUSB_LIBRARY})
 
 add_executable(image src/keyboard_image.cpp ${COMMON_SOURCES})
 target_link_libraries(image ${LIBUSB_LIBRARY})
+
+add_executable(mania src/keyboard_mania.cpp ${COMMON_SOURCES})
+target_link_libraries(mania ${LIBUSB_LIBRARY})
