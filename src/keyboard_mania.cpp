@@ -6,16 +6,17 @@
 #include <set>
 #include <time.h>
 #include <unistd.h>
+#include <math.h>
 
 struct Note {
     int row;
-    int column;
+    float column;
     uint length;
 
     LedKeyboard::Color color;
 };
 
-static const auto colors = std::array {
+static auto const colors = std::array {
     LedKeyboard::Color { .red = 0xff, .green = 0x80, .blue = 0xed },
     LedKeyboard::Color { .red = 0x06, .green = 0x55, .blue = 0x35 },
     LedKeyboard::Color { .red = 0xff, .green = 0xc0, .blue = 0xcb },
@@ -25,7 +26,9 @@ static const auto colors = std::array {
     LedKeyboard::Color { .red = 0x13, .green = 0x33, .blue = 0x37 },
 };
 
-void render_note(std::vector<LedKeyboard::KeyValue>& keys, Note const& note)
+static void render_note(
+    std::vector<LedKeyboard::KeyValue>& keys,
+    Note const& note)
 {
     for (int i = 0; i < note.length; ++i) {
         auto column = note.column + i;
@@ -45,9 +48,54 @@ void render_note(std::vector<LedKeyboard::KeyValue>& keys, Note const& note)
     }
 }
 
-void render_frame(LedKeyboard& keyboard, std::vector<Note> const& notes)
+static void render_health_bar(
+    std::vector<LedKeyboard::KeyValue>& keys,
+    float health)
+{
+    for (int i = 0; i < health * 20; i++) {
+        keys.push_back(LedKeyboard::KeyValue {
+            .key = *Layout::map[0][i],
+            .color = {
+                .red = static_cast<uint8_t>(0xFF * (1.0 - health)),
+                .green = static_cast<uint8_t>(0xFF * health),
+                .blue = 0,
+            },
+        });
+    }
+}
+
+static void render_hit_indicator(
+    std::vector<LedKeyboard::KeyValue>& keys,
+    LedKeyboard::Color hit_indicator)
+{
+    const auto start_column = 20;
+    const auto end_column = 24;
+
+    for (int row = 0; row < Layout::map.size(); ++row) {
+        for (int column = start_column; column < end_column; ++column) {
+            auto key = Layout::map[row][column];
+            if (!key) {
+                continue;
+            }
+
+            keys.push_back(LedKeyboard::KeyValue {
+                .key = *key,
+                .color = hit_indicator,
+            });
+        }
+    }
+}
+
+static void render_frame(
+    LedKeyboard& keyboard,
+    std::vector<Note> const& notes,
+    LedKeyboard::Color hit_indicator,
+    float health,
+    float time)
 {
     std::vector<LedKeyboard::KeyValue> keys;
+    render_health_bar(keys, health);
+    render_hit_indicator(keys, hit_indicator);
     for (auto const& note : notes) {
         render_note(keys, note);
     }
@@ -57,14 +105,14 @@ void render_frame(LedKeyboard& keyboard, std::vector<Note> const& notes)
     keyboard.commit();
 }
 
-void apply_note_step(std::vector<Note>& notes)
+static void apply_note_step(std::vector<Note>& notes, float step)
 {
     for (auto& note : notes) {
-        note.column -= 1;
+        note.column -= step;
     }
 }
 
-std::vector<Note> build_note_sequence(Osu const& osu)
+static std::vector<Note> build_note_sequence(Osu const& osu)
 {
     std::set<int> x_positions;
     for (auto const& hit_object : osu.hit_objects) {
@@ -89,7 +137,7 @@ std::vector<Note> build_note_sequence(Osu const& osu)
 
         notes.push_back(Note {
             .row = row,
-            .column = hit_object.time / 100,
+            .column = static_cast<float>(hit_object.time / 100),
             .length = length,
             .color = colors[row],
         });
@@ -98,16 +146,21 @@ std::vector<Note> build_note_sequence(Osu const& osu)
     return notes;
 }
 
-void play_song(LedKeyboard& keyboard)
+static void play_song(LedKeyboard& keyboard)
 {
     auto osu = parse_osu_file("test.osu");
     auto notes = build_note_sequence(osu);
 
-    for (;;) {
-        render_frame(keyboard, notes);
-        apply_note_step(notes);
+    float time = 0;
+    float health = 0.7;
+    LedKeyboard::Color hit_indicator = { .green = 0xFF };
 
+    for (;;) {
+        render_frame(keyboard, notes, hit_indicator, health, time);
+
+        apply_note_step(notes, 1);
         usleep(100 * 1000);
+        time += 0.1f;
     }
 }
 
