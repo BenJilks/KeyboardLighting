@@ -10,6 +10,7 @@ find_library(LIBUSB_LIBRARY
     PATH_SUFFIXES "lib" "lib32" "lib64"
 )
 
+include_directories(KeyboardLighting src/)
 set(COMMON_SOURCES
     src/keyboard.cpp src/keyboard.h
     src/keyboard_layout.h
@@ -22,5 +23,12 @@ target_link_libraries(text ${LIBUSB_LIBRARY})
 add_executable(image src/keyboard_image.cpp ${COMMON_SOURCES})
 target_link_libraries(image ${LIBUSB_LIBRARY})
 
-add_executable(mania src/keyboard_mania.cpp src/osu_parser.cpp ${COMMON_SOURCES})
-target_link_libraries(mania ${LIBUSB_LIBRARY})
+add_executable(mania
+    src/mania/keyboard_mania.cpp
+    src/mania/osu_parser.cpp src/mania/osu_parser.h
+    src/mania/playback.cpp src/mania/playback.h
+    src/mania/render.cpp src/mania/render.h
+    src/mania/forward.h
+    ${COMMON_SOURCES}
+)
+target_link_libraries(mania ${LIBUSB_LIBRARY} raylib)

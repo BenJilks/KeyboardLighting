@@ -6,6 +6,8 @@
 #include <charconv>
 #include <algorithm>
 
+using namespace Mania;
+
 enum class State {
     Initial,
     BeforeFirstCategory,
@@ -205,7 +207,7 @@ static void parse_entry(Osu &osu,
     }
 }
 
-Osu parse_osu_file(std::string_view file_path)
+Osu Mania::parse_osu_file(std::string_view file_path)
 {
     auto parsed_file = Osu{};
     auto state = State::Initial;

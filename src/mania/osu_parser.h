@@ -1,7 +1,9 @@
-#include <string>
-#include <map>
-#include <vector>
 #include <array>
+#include <map>
+#include <string>
+#include <vector>
+
+namespace Mania {
 
 struct TimingPoint {
     int time;
@@ -33,3 +35,5 @@ struct Osu {
 };
 
 Osu parse_osu_file(std::string_view file_path);
+
+}
