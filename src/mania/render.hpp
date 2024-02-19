@@ -4,11 +4,6 @@
 
 namespace Mania {
 
-void render_frame(
-    LedKeyboard& keyboard,
-    std::vector<Note> const& notes,
-    LedKeyboard::Color hit_indicator,
-    float health,
-    float time);
+void render_frame(LedKeyboard& keyboard, const GameState &state);
 
 }

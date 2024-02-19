@@ -4,6 +4,13 @@
 
 namespace Mania {
 
+struct GameState {
+    std::vector<Note> notes;
+    LedKeyboard::Color hit_indicator { .green = 0xFF };
+    float health { 0.7 };
+    float time { 0 };
+};
+
 struct Note {
     int row;
     float time;
@@ -23,6 +30,6 @@ static auto const colors = std::array {
     LedKeyboard::Color { .red = 0x13, .green = 0x33, .blue = 0x37 },
 };
 
-std::vector<Note> build_note_sequence(Osu const& osu);
+GameState initialize_game_state(Osu const& osu);
 
 }

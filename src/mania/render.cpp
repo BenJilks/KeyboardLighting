@@ -66,18 +66,13 @@ static void render_hit_indicator(
     }
 }
 
-void Mania::render_frame(
-    LedKeyboard& keyboard,
-    std::vector<Note> const& notes,
-    LedKeyboard::Color hit_indicator,
-    float health,
-    float time)
+void Mania::render_frame(LedKeyboard& keyboard, const GameState &state)
 {
     std::vector<LedKeyboard::KeyValue> keys;
-    render_health_bar(keys, health);
-    render_hit_indicator(keys, hit_indicator);
-    for (auto const& note : notes) {
-        render_note(keys, note, time);
+    render_health_bar(keys, state.health);
+    render_hit_indicator(keys, state.hit_indicator);
+    for (auto const& note : state.notes) {
+        render_note(keys, note, state.time);
     }
 
     keyboard.setAllKeys({ .red = 0, .green = 0, .blue = 0 });

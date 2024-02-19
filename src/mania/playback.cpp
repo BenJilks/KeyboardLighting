@@ -4,7 +4,7 @@
 
 using namespace Mania;
 
-std::vector<Note> Mania::build_note_sequence(Osu const& osu)
+GameState Mania::initialize_game_state(Osu const& osu)
 {
     std::set<int> x_positions;
     for (auto const& hit_object : osu.hit_objects) {
@@ -35,5 +35,7 @@ std::vector<Note> Mania::build_note_sequence(Osu const& osu)
         });
     }
 
-    return notes;
+    return GameState {
+        .notes = notes,
+    };
 }

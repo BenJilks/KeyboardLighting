@@ -4,13 +4,13 @@
 #include "render.hpp"
 
 #include <algorithm>
-#include <iostream>
-#include <set>
-#include <unistd.h>
 #include <fcntl.h>
-#include <termios.h>
+#include <iostream>
 #include <math.h>
+#include <set>
+#include <termios.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <raylib.h>
 
@@ -18,22 +18,23 @@ using namespace Mania;
 
 static void play_song(LedKeyboard& keyboard)
 {
+    // FIXME: This is a REALLY bad hack for disabling the normal capslock
+    //        behaviour. Obviously, this only works on X11.
+    system("setxkbmap -option caps:none");
+
     InitWindow(100, 100, "Keyboard Mania");
     SetTargetFPS(60);
 
     auto osu = parse_osu_file("test.osu");
-    auto notes = build_note_sequence(osu);
-
-    LedKeyboard::Color hit_indicator = { .green = 0xFF };
-    float health = 0.7;
-    float time = 0;
+    auto state = initialize_game_state(osu);
     float frame_timer = 0;
 
     while (!WindowShouldClose()) {
+        state.time += GetFrameTime() / 2.0;
+
         frame_timer += GetFrameTime();
-        time += GetFrameTime();
         if (frame_timer > 0.2) {
-            render_frame(keyboard, notes, hit_indicator, health, time / 2.0);
+            render_frame(keyboard, state);
             frame_timer = 0;
         }
 
