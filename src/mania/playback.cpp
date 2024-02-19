@@ -1,5 +1,5 @@
-#include "playback.h"
-#include "osu_parser.h"
+#include "playback.hpp"
+#include "osu_parser.hpp"
 #include <set>
 
 using namespace Mania;

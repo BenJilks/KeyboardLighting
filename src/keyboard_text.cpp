@@ -1,5 +1,5 @@
-#include "keyboard.h"
-#include "keyboard_layout.h"
+#include "keyboard.hpp"
+#include "keyboard_layout.hpp"
 #include <cctype>
 #include <string_view>
 #include <unistd.h>

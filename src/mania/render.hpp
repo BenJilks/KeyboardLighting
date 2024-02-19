@@ -1,5 +1,5 @@
-#include "forward.h"
-#include "keyboard.h"
+#include "forward.hpp"
+#include "keyboard.hpp"
 #include <vector>
 
 namespace Mania {

@@ -1,7 +1,7 @@
-#include "keyboard.h"
-#include "osu_parser.h"
-#include "playback.h"
-#include "render.h"
+#include "keyboard.hpp"
+#include "osu_parser.hpp"
+#include "playback.hpp"
+#include "render.hpp"
 
 #include <algorithm>
 #include <iostream>

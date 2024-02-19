@@ -1,6 +1,6 @@
-#include "keyboard_layout.h"
-#include "render.h"
-#include "playback.h"
+#include "keyboard_layout.hpp"
+#include "render.hpp"
+#include "playback.hpp"
 
 using namespace Mania;
 

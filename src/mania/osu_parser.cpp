@@ -1,4 +1,4 @@
-#include "osu_parser.h"
+#include "osu_parser.hpp"
 #include <fstream>
 #include <iostream>
 #include <optional>
