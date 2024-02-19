@@ -4,13 +4,6 @@
 
 using namespace Mania;
 
-void Mania::apply_note_step(std::vector<Note>& notes, float step)
-{
-    for (auto& note : notes) {
-        note.column -= step;
-    }
-}
-
 std::vector<Note> Mania::build_note_sequence(Osu const& osu)
 {
     std::set<int> x_positions;
@@ -36,7 +29,7 @@ std::vector<Note> Mania::build_note_sequence(Osu const& osu)
 
         notes.push_back(Note {
             .row = row,
-            .column = static_cast<float>(hit_object.time / 100),
+            .time = hit_object.time / 1000.0f,
             .length = length,
             .color = colors[row],
         });

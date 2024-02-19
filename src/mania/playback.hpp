@@ -6,10 +6,11 @@ namespace Mania {
 
 struct Note {
     int row;
-    float column;
+    float time;
     uint length;
-
     LedKeyboard::Color color;
+
+    bool hit { false };
 };
 
 static auto const colors = std::array {
@@ -23,7 +24,5 @@ static auto const colors = std::array {
 };
 
 std::vector<Note> build_note_sequence(Osu const& osu);
-
-void apply_note_step(std::vector<Note>& notes, float step);
 
 }

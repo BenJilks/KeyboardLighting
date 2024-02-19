@@ -6,10 +6,12 @@ using namespace Mania;
 
 static void render_note(
     std::vector<LedKeyboard::KeyValue>& keys,
-    Note const& note)
+    Note const& note,
+    float time)
 {
+    const auto start_column = static_cast<int>((note.time - time) * 10);
     for (int i = 0; i < note.length; ++i) {
-        auto column = note.column + i;
+        auto column = start_column + i;
         if (column < 0 || column >= 13) {
             continue;
         }
@@ -75,7 +77,7 @@ void Mania::render_frame(
     render_health_bar(keys, health);
     render_hit_indicator(keys, hit_indicator);
     for (auto const& note : notes) {
-        render_note(keys, note);
+        render_note(keys, note, time);
     }
 
     keyboard.setAllKeys({ .red = 0, .green = 0, .blue = 0 });

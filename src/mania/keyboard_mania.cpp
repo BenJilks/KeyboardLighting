@@ -25,20 +25,20 @@ static void play_song(LedKeyboard& keyboard)
     auto notes = build_note_sequence(osu);
 
     LedKeyboard::Color hit_indicator = { .green = 0xFF };
-    float time = 0;
     float health = 0.7;
+    float time = 0;
+    float frame_timer = 0;
 
-    int count = 0;
     while (!WindowShouldClose()) {
-        if (count > 10) {
-            render_frame(keyboard, notes, hit_indicator, health, time);
-            apply_note_step(notes, 1);
-            time += 0.1f;
-            count = 0;
+        frame_timer += GetFrameTime();
+        time += GetFrameTime();
+        if (frame_timer > 0.2) {
+            render_frame(keyboard, notes, hit_indicator, health, time / 2.0);
+            frame_timer = 0;
         }
 
-        usleep(10 * 1000);
-        count += 1;
+        BeginDrawing();
+        EndDrawing();
     }
 
     CloseWindow();
