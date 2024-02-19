@@ -1,8 +1,15 @@
 #include "playback.hpp"
 #include "osu_parser.hpp"
+#include <math.h>
 #include <set>
 
 using namespace Mania;
+
+enum class Score {
+    PERFECT,
+    GOOD,
+    OK,
+};
 
 GameState Mania::initialize_game_state(Osu const& osu)
 {
@@ -38,4 +45,93 @@ GameState Mania::initialize_game_state(Osu const& osu)
     return GameState {
         .notes = notes,
     };
+}
+
+static std::optional<Score> get_score(float distance)
+{
+    if (distance <= 0.01) {
+        return Score::PERFECT;
+    } else if (distance <= 0.05) {
+        return Score::GOOD;
+    } else if (distance <= 0.1) {
+        return Score::OK;
+    } else {
+        return std::nullopt;
+    }
+}
+
+static LedKeyboard::Color color_for_score(Score score)
+{
+    switch (score) {
+    case Score::PERFECT:
+        return { .green = 0xFF };
+    case Score::GOOD:
+        return { .red = 0xFF, .green = 0xFF };
+    case Score::OK:
+        return { .red = 0xFF, .green = 0x7F };
+    }
+}
+
+static float health_for_score(Score score)
+{
+    switch (score) {
+    case Score::PERFECT:
+        return 0.1;
+    case Score::GOOD:
+        return 0.05;
+    case Score::OK:
+        return 0.01;
+    }
+}
+
+static void clamp_health(GameState &state)
+{
+    if (state.health > 1) {
+        state.health = 1;
+    } else if (state.health < 0) {
+        state.health = 0;
+    }
+}
+
+void Mania::on_key_pressed(GameState& state, uint row)
+{
+    for (auto& note : state.notes) {
+        if (note.hit) {
+            continue;
+        }
+
+        float distance = std::fabs(note.time - state.time);
+        auto score_or_none = get_score(distance);
+        if (!score_or_none) {
+            continue;
+        }
+
+        // On note hit.
+        auto score = score_or_none.value();
+        state.hit_indicator = color_for_score(score);
+        state.health += health_for_score(score);
+        note.hit = true;
+    }
+
+    clamp_health(state);
+}
+
+void Mania::register_misses(GameState &state)
+{
+    for (auto& note : state.notes) {
+        if (note.hit) {
+            continue;
+        }
+
+        if (state.time - note.time <= 0.1) {
+            continue;
+        }
+
+        // On note miss.
+        state.hit_indicator = { .red = 0xFF };
+        state.health -= 0.2;
+        note.hit = true;
+    }
+
+    clamp_health(state);
 }

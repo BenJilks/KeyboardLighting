@@ -32,4 +32,7 @@ static auto const colors = std::array {
 
 GameState initialize_game_state(Osu const& osu);
 
+void on_key_pressed(GameState &state, uint row);
+void register_misses(GameState &state);
+
 }
