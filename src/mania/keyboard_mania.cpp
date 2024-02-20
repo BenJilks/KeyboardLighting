@@ -16,6 +16,19 @@
 
 using namespace Mania;
 
+static void handle_input(GameState &state)
+{
+    if (IsKeyPressed(KEY_GRAVE)) { on_key_pressed(state, 0); }
+    if (IsKeyPressed(KEY_TAB)) { on_key_pressed(state, 1); }
+    if (IsKeyPressed(KEY_CAPS_LOCK)) { on_key_pressed(state, 2); }
+    if (IsKeyPressed(KEY_LEFT_SHIFT)) { on_key_pressed(state, 3); }
+
+    if (IsKeyReleased(KEY_GRAVE)) { on_key_released(state, 0); }
+    if (IsKeyReleased(KEY_TAB)) { on_key_released(state, 1); }
+    if (IsKeyReleased(KEY_CAPS_LOCK)) { on_key_released(state, 2); }
+    if (IsKeyReleased(KEY_LEFT_SHIFT)) { on_key_released(state, 3); }
+}
+
 static void play_song(LedKeyboard& keyboard)
 {
     // FIXME: This is a REALLY bad hack for disabling the normal capslock
@@ -40,20 +53,7 @@ static void play_song(LedKeyboard& keyboard)
         }
 
         BeginDrawing();
-
-        if (IsKeyPressed(KEY_GRAVE)) {
-            on_key_pressed(state, 0);
-        }
-        if (IsKeyPressed(KEY_TAB)) {
-            on_key_pressed(state, 1);
-        }
-        if (IsKeyPressed(KEY_CAPS_LOCK)) {
-            on_key_pressed(state, 2);
-        }
-        if (IsKeyPressed(KEY_LEFT_SHIFT)) {
-            on_key_pressed(state, 3);
-        }
-
+        handle_input(state);
         EndDrawing();
     }
 

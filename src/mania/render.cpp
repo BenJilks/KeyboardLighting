@@ -10,7 +10,7 @@ static void render_note(
     float time)
 {
     const auto start_column = static_cast<int>((note.time - time) * 10);
-    for (int i = 0; i < note.length; ++i) {
+    for (int i = 0; i < note.length * 10; ++i) {
         auto column = start_column + i;
         if (column < 0 || column >= 13) {
             continue;

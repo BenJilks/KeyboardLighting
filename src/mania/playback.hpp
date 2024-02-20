@@ -11,13 +11,21 @@ struct GameState {
     float time { 0 };
 };
 
+enum class NoteType {
+    Tap,
+    Hold,
+};
+
 struct Note {
+    NoteType note_type;
+
     int row;
     float time;
-    uint length;
     LedKeyboard::Color color;
-
     bool hit { false };
+
+    float length;
+    bool held { false };
 };
 
 static auto const colors = std::array {
@@ -33,6 +41,7 @@ static auto const colors = std::array {
 GameState initialize_game_state(Osu const& osu);
 
 void on_key_pressed(GameState &state, uint row);
+void on_key_released(GameState &state, uint row);
 void register_misses(GameState &state);
 
 }
