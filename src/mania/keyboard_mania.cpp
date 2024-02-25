@@ -33,40 +33,47 @@ static void play_song(LedKeyboard& keyboard)
 {
     // FIXME: This is a REALLY bad hack for disabling the normal capslock
     //        behaviour. Obviously, this only works on X11.
-    system("setxkbmap -option caps:none");
+    // if (execlp("setxkbmap", "-option", "caps:none") < 0) {
+    //     perror("Could not disable normal caps-lock");
+    //     return;
+    // }
 
     InitWindow(100, 100, "Keyboard Mania");
-    SetTargetFPS(60);
+    InitAudioDevice();
+    SetTargetFPS(30);
 
-    auto osu = parse_osu_file("test.osu");
+    auto osu = parse_osu_file("test2.osu");
     auto state = initialize_game_state(osu);
     float frame_timer = 0;
 
-    while (!WindowShouldClose()) {
-        state.time += GetFrameTime() / 2.0;
+    auto music = LoadSound("audio.mp3");
+    SetSoundVolume(music, 0.1);
+    PlaySound(music);
 
-        frame_timer += GetFrameTime();
-        if (frame_timer > 0.2) {
-            render_frame(keyboard, state);
-            register_misses(state);
-            frame_timer = 0;
+    while (!WindowShouldClose()) {
+        state.time += static_cast<float>(GetFrameTime() / 2.0);
+
+        if (IsSoundPlaying(music)) {
+            frame_timer += GetFrameTime();
+            if (frame_timer > 0.2) {
+                render_frame(keyboard, state);
+                register_misses(state);
+                frame_timer = 0;
+            }
         }
 
         BeginDrawing();
-        handle_input(state);
+            handle_input(state);
         EndDrawing();
     }
 
+    UnloadSound(music);
+    CloseAudioDevice();
     CloseWindow();
 }
 
 int main()
 {
-    if (getuid() != 0) {
-        std::cerr << "Error: Can be only run as root\n";
-        return 1;
-    }
-
     LedKeyboard keyboard;
     if (!keyboard.open()) {
         std::cerr << "Error: Unable to connect to keyboard\n";
