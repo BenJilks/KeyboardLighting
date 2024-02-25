@@ -33,10 +33,7 @@ static void play_song(LedKeyboard& keyboard)
 {
     // FIXME: This is a REALLY bad hack for disabling the normal capslock
     //        behaviour. Obviously, this only works on X11.
-    // if (execlp("setxkbmap", "-option", "caps:none") < 0) {
-    //     perror("Could not disable normal caps-lock");
-    //     return;
-    // }
+    system("setxkbmap -option caps:none");
 
     InitWindow(100, 100, "Keyboard Mania");
     InitAudioDevice();
