@@ -4,27 +4,43 @@
 
 using namespace Mania;
 
+static void render_point(
+    std::vector<LedKeyboard::KeyValue>& keys,
+    Note const& note,
+    int column)
+{
+    if (column < 0 || column >= 13) {
+        return;
+    }
+
+    auto key = Layout::map[note.row + 1][column];
+    if (!key) {
+        return;
+    }
+
+    keys.push_back(LedKeyboard::KeyValue {
+        .key = *key,
+        .color = note.color,
+    });
+}
+
 static void render_note(
     std::vector<LedKeyboard::KeyValue>& keys,
     Note const& note,
     float time)
 {
     const auto start_column = static_cast<int>((note.time - time) * 10);
-    for (int i = 0; i < note.length * 10; ++i) {
-        auto column = start_column + i;
-        if (column < 0 || column >= 13) {
-            continue;
-        }
 
-        auto key = Layout::map[note.row + 1][column];
-        if (!key) {
-            continue;
+    switch (note.note_type) {
+    case NoteType::Tap:
+        render_point(keys, note, start_column);
+        break;
+    case NoteType::Hold:
+        for (int i = 0; i < static_cast<int>(note.length * 10); ++i) {
+            auto column = start_column + i;
+            render_point(keys, note, column);
         }
-
-        keys.push_back(LedKeyboard::KeyValue {
-            .key = *key,
-            .color = note.color,
-        });
+        break;
     }
 }
 
