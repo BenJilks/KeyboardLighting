@@ -25,7 +25,7 @@ GameState Mania::initialize_game_state(Osu const& osu)
     std::vector<Note> notes;
     for (auto const& hit_object : osu.hit_objects) {
         auto it = std::find(x_to_row.begin(), x_to_row.end(), hit_object.x);
-        int row = it - x_to_row.begin();
+        int row = static_cast<int>(it - x_to_row.begin());
         if (row > 3) {
             continue;
         }
@@ -34,14 +34,14 @@ GameState Mania::initialize_game_state(Osu const& osu)
         float length = 1;
         if (hit_object.type & 128) {
             type = NoteType::Hold;
-            length = (hit_object.params[0] - hit_object.time) / 1000.0f;
+            length = static_cast<float>(hit_object.params[0] - hit_object.time) / 1000.0f;
         }
 
         notes.push_back(Note {
             .note_type = type,
 
             .row = row,
-            .time = hit_object.time / 1000.0f,
+            .time = static_cast<float>(hit_object.time) / 1000.0f,
             .color = colors[row],
 
             .length = length,
@@ -120,6 +120,10 @@ static void note_missed(GameState &state, Note &note)
 void Mania::on_key_pressed(GameState& state, uint row)
 {
     for (auto& note : state.notes) {
+        if (note.row != row) {
+            continue;
+        }
+
         if (note.hit || note.held) {
             continue;
         }
@@ -146,6 +150,10 @@ void Mania::on_key_pressed(GameState& state, uint row)
 void Mania::on_key_released(GameState& state, uint row)
 {
     for (auto& note : state.notes) {
+        if (note.row != row) {
+            continue;
+        }
+
         if (note.hit || !note.held) {
             continue;
         }
@@ -164,7 +172,7 @@ void Mania::register_misses(GameState &state)
 {
     for (auto& note : state.notes) {
         if (note.hit) {
-            break;
+            continue;
         }
 
         switch (note.note_type) {
